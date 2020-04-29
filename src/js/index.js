@@ -11,7 +11,7 @@ const search = document.getElementById('search'),
 //*Second create submit eventListener for searchMeal function
 //*Third create searchMeal function (fetch API and loop through and then output into DOM) on eventListener pass an e for event to prevent default behavior, don't want it to submit to a file 
 //*Fourth put in fetch API link and make it dynamic, need .then because the API returns a promise, use json and that returns another promise
-//*Fifth
+//*Fifth if data.meals === null for when someone types in "ddddgf" an unrecognizable attribute, console marks as null , else we use the attributes from the API to display results
 //*Sixth
 
 // Search meal and fetch from API
@@ -39,7 +39,7 @@ function searchMeal(e) {
             .map(
               meal => `
             <div class="meal">
-              <img src="${meal.strMealThumb}" alt="${meal.strMeal}" />
+              <img src="${meal.strMealThumb}" alt="${meal.strMeal}" /> 
               <div class="meal-info" data-mealID="${meal.idMeal}">
                 <h3>${meal.strMeal}</h3>
               </div>
@@ -59,3 +59,19 @@ function searchMeal(e) {
 
 //Event listeners 
 submit.addEventListener('submit', searchMeal);
+
+//API items have data-mealId and need to check to see if items have a meal-info class first
+mealsEl.addEventListener('click', e => {
+  const mealInfo = e.path.find(item => {
+    if (item.classList) {
+      return item.classList.contains('meal-info');
+    } else {
+      return false;
+    }
+  });
+
+  if (mealInfo) {
+    const mealID = mealInfo.getAttribute('data-mealid');
+    getMealById(mealID);
+  }
+});
