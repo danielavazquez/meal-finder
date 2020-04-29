@@ -10,9 +10,11 @@ const search = document.getElementById('search'),
 //*First bring in all the DOM elements 
 //*Second create submit eventListener for searchMeal function
 //*Third create searchMeal function (fetch API and loop through and then output into DOM) on eventListener pass an e for event to prevent default behavior, don't want it to submit to a file 
-//*Fourth put in fetch API link and make it dynamic, need .then because the API returns a promise, use json and that returns another promise
+//*Fourth put in fetch API link and make it dynamic, need, fetch returns a promise that returns a response that we want to be JSON that again returns a promise
 //*Fifth if data.meals === null for when someone types in "ddddgf" an unrecognizable attribute, console marks as null , else we use the attributes from the API to display results
-//*Sixth
+//*Sixth create mealsEl eventListener
+//*Seventh create function getMealById
+
 
 // Search meal and fetch from API
 function searchMeal(e) {
@@ -56,11 +58,75 @@ function searchMeal(e) {
   }
 }
 
+// Fetch meal by ID
+//will make fetch request again to lookup full meal details by Id, used a different API key
+//create a variable meal that sets it to data.meals and since it's an arr want first vale [0]
+//addMealToDOM adds it to DOM and pass in meal
+function getMealById(mealID) {
+  fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealID}`)
+    .then(res => res.json())
+    .then(data => {
+      const meal = data.meals[0];
+
+      addMealToDOM(meal);
+    });
+}
+
+// Fetch random meal from API
+function getRandomMeal() {
+  // Clear meals and heading
+  mealsEl.innerHTML = '';
+  resultHeading.innerHTML = '';
+
+  fetch(`https://www.themealdb.com/api/json/v1/1/random.php`)
+    .then(res => res.json())
+    .then(data => {
+      const meal = data.meals[0];
+
+      addMealToDOM(meal);
+    });
+}
+
+// Add meal to DOM
+function addMealToDOM(meal) {
+  const ingredients = [];
+
+  for (let i = 1; i <= 20; i++) {
+    if (meal[`strIngredient${i}`]) {
+      ingredients.push(
+        `${meal[`strIngredient${i}`]} - ${meal[`strMeasure${i}`]}`
+      );
+    } else {
+      break;
+    }
+  }
+
+  single_mealEl.innerHTML = `
+    <div class="single-meal">
+      <h1>${meal.strMeal}</h1>
+      <img src="${meal.strMealThumb}" alt="${meal.strMeal}" />
+      <div class="single-meal-info">
+        ${meal.strCategory ? `<p>${meal.strCategory}</p>` : ''}
+        ${meal.strArea ? `<p>${meal.strArea}</p>` : ''}
+      </div>
+      <div class="main">
+        <p>${meal.strInstructions}</p>
+        <h2>Ingredients</h2>
+        <ul>
+          ${ingredients.map(ing => `<li>${ing}</li>`).join('')}
+        </ul>
+      </div>
+    </div>
+  `;
+}
 
 //Event listeners 
 submit.addEventListener('submit', searchMeal);
 
-//API items have data-mealId and need to check to see if items have a meal-info class first
+//API items have data-mealId and need to check to see if items have a meal-info class first that then checks to see if they also have data-mealid
+//path.find goes through all child elements or items
+//each food item has a meal-info class with a data-mealid
+//will use contains method for first if stmt
 mealsEl.addEventListener('click', e => {
   const mealInfo = e.path.find(item => {
     if (item.classList) {
