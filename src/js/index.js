@@ -14,7 +14,8 @@ const search = document.getElementById('search'),
 //*Fifth if data.meals === null for when someone types in "ddddgf" an unrecognizable attribute, console marks as null , else we use the attributes from the API to display results
 //*Sixth create mealsEl eventListener
 //*Seventh create function getMealById
-
+//*Eighth add meal to DOM with for loop and updating single_mealEl innerHTML
+//*Ninth add random functionality getRandomMeal
 
 // Search meal and fetch from API
 function searchMeal(e) {
@@ -73,6 +74,8 @@ function getMealById(mealID) {
 }
 
 // Fetch random meal from API
+//will give us an arr even though we want one meal, so create a variable and set it to data.meals
+//will call addMealToDOM using function below
 function getRandomMeal() {
   // Clear meals and heading
   mealsEl.innerHTML = '';
@@ -88,6 +91,7 @@ function getRandomMeal() {
 }
 
 // Add meal to DOM
+//when we click on meal img will get instructions, and ingredients and measurement in arr as seen in for loop
 function addMealToDOM(meal) {
   const ingredients = [];
 
@@ -122,6 +126,7 @@ function addMealToDOM(meal) {
 
 //Event listeners 
 submit.addEventListener('submit', searchMeal);
+random.addEventListener('click', getRandomMeal);
 
 //API items have data-mealId and need to check to see if items have a meal-info class first that then checks to see if they also have data-mealid
 //path.find goes through all child elements or items
